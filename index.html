@@ -1,16 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GPT Engineer</title>
+  <title>Future Daft Punk Beatmaker</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #0ff;
+      text-shadow: 0 0 10px #0ff;
+    }
+    .beat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .beat-pad {
+      width: 100px;
+      height: 100px;
+      background-color: #333;
+      border: 2px solid #0ff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .beat-pad:hover {
+      background-color: #444;
+      box-shadow: 0 0 15px #0ff;
+    }
+    .beat-pad.active {
+      background-color: #0ff;
+      box-shadow: 0 0 20px #0ff;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    button {
+      background-color: #0ff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin: 0 10px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      background-color: #00ffff80;
+      box-shadow: 0 0 15px #0ff;
+    }
+    @keyframes neon-glow {
+      0% { box-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #0ff, 0 0 20px #0ff; }
+      100% { box-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff; }
+    }
+    .neon-border {
+      border: 2px solid #0ff;
+      border-radius: 20px;
+      padding: 40px;
+      animation: neon-glow 1.5s ease-in-out infinite alternate;
+    }
+  </style>
 </head>
-
 <body>
-  Your blank canvas
-  <!-- insert your changes here -->
-</body>
+  <div class="container">
+    <div class="neon-border">
+      <h1>Future Daft Punk Beatmaker</h1>
+      <div class="beat-grid">
+        <div class="beat-pad" data-sound="kick"></div>
+        <div class="beat-pad" data-sound="snare"></div>
+        <div class="beat-pad" data-sound="hihat"></div>
+        <div class="beat-pad" data-sound="clap"></div>
+        <div class="beat-pad" data-sound="tom"></div>
+        <div class="beat-pad" data-sound="crash"></div>
+        <div class="beat-pad" data-sound="perc1"></div>
+        <div class="beat-pad" data-sound="perc2"></div>
+      </div>
+      <div class="controls">
+        <button id="play-pause">Play</button>
+        <button id="reset">Reset</button>
+      </div>
+    </div>
+  </div>
 
+  <script>
+    const beatPads = document.querySelectorAll('.beat-pad');
+    const playPauseButton = document.getElementById('play-pause');
+    const resetButton = document.getElementById('reset');
+    let isPlaying = false;
+    let interval;
+
+    const sounds = {
+      kick: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/kick.wav'),
+      snare: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/snare.wav'),
+      hihat: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/hihat.wav'),
+      clap: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/clap.wav'),
+      tom: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/tom.wav'),
+      crash: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/crash.wav'),
+      perc1: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/perc.wav'),
+      perc2: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/perc2.wav')
+    };
+
+    beatPads.forEach(pad => {
+      pad.addEventListener('click', () => {
+        pad.classList.toggle('active');
+        const sound = sounds[pad.dataset.sound];
+        sound.currentTime = 0;
+        sound.play();
+      });
+    });
+
+    function playBeat() {
+      beatPads.forEach(pad => {
+        if (pad.classList.contains('active')) {
+          const sound = sounds[pad.dataset.sound];
+          sound.currentTime = 0;
+          sound.play();
+        }
+      });
+    }
+
+    playPauseButton.addEventListener('click', () => {
+      if (isPlaying) {
+        clearInterval(interval);
+        playPauseButton.textContent = 'Play';
+      } else {
+        interval = setInterval(playBeat, 500);
+        playPauseButton.textContent = 'Pause';
+      }
+      isPlaying = !isPlaying;
+    });
+
+    resetButton.addEventListener('click', () => {
+      clearInterval(interval);
+      isPlaying = false;
+      playPauseButton.textContent = 'Play';
+      beatPads.forEach(pad => pad.classList.remove('active'));
+    });
+  </script>
+</body>
 </html>
