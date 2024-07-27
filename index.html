@@ -43,6 +43,12 @@
       border-radius: 10px;
       cursor: pointer;
       transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      color: #0ff;
     }
     .beat-pad:hover {
       background-color: #444;
@@ -89,14 +95,18 @@
     <div class="neon-border">
       <h1>Future Daft Punk Beatmaker</h1>
       <div class="beat-grid">
-        <div class="beat-pad" data-sound="kick"></div>
-        <div class="beat-pad" data-sound="snare"></div>
-        <div class="beat-pad" data-sound="hihat"></div>
-        <div class="beat-pad" data-sound="clap"></div>
-        <div class="beat-pad" data-sound="tom"></div>
-        <div class="beat-pad" data-sound="crash"></div>
-        <div class="beat-pad" data-sound="perc1"></div>
-        <div class="beat-pad" data-sound="perc2"></div>
+        <div class="beat-pad" data-sound="kick">Kick</div>
+        <div class="beat-pad" data-sound="snare">Snare</div>
+        <div class="beat-pad" data-sound="hihat">Hi-Hat</div>
+        <div class="beat-pad" data-sound="clap">Clap</div>
+        <div class="beat-pad" data-sound="tom">Tom</div>
+        <div class="beat-pad" data-sound="crash">Crash</div>
+        <div class="beat-pad" data-sound="perc">Perc</div>
+        <div class="beat-pad" data-sound="cowbell">Cowbell</div>
+        <div class="beat-pad" data-sound="synth1">Synth 1</div>
+        <div class="beat-pad" data-sound="synth2">Synth 2</div>
+        <div class="beat-pad" data-sound="fx1">FX 1</div>
+        <div class="beat-pad" data-sound="fx2">FX 2</div>
       </div>
       <div class="controls">
         <button id="play-pause">Play</button>
@@ -112,32 +122,50 @@
     let isPlaying = false;
     let interval;
 
-    const sounds = {
-      kick: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/kick.wav'),
-      snare: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/snare.wav'),
-      hihat: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/hihat.wav'),
-      clap: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/clap.wav'),
-      tom: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/tom.wav'),
-      crash: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/crash.wav'),
-      perc1: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/perc.wav'),
-      perc2: new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/perc2.wav')
+    const soundUrls = {
+      kick: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/kick.wav',
+      snare: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/snare.wav',
+      hihat: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/hihat.wav',
+      clap: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/clap.wav',
+      tom: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/tom.wav',
+      crash: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/crash.wav',
+      perc: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/perc.wav',
+      cowbell: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/cowbell.wav',
+      synth1: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/synth.wav',
+      synth2: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/synth2.wav',
+      fx1: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/fx-1.wav',
+      fx2: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/fx-2.wav'
     };
+
+    const sounds = {};
+
+    function loadSounds() {
+      Object.keys(soundUrls).forEach(key => {
+        sounds[key] = new Audio(soundUrls[key]);
+        sounds[key].load();
+      });
+    }
+
+    loadSounds();
 
     beatPads.forEach(pad => {
       pad.addEventListener('click', () => {
         pad.classList.toggle('active');
-        const sound = sounds[pad.dataset.sound];
-        sound.currentTime = 0;
-        sound.play();
+        playSound(pad.dataset.sound);
       });
     });
+
+    function playSound(soundName) {
+      if (sounds[soundName]) {
+        sounds[soundName].currentTime = 0;
+        sounds[soundName].play().catch(error => console.error('Error playing sound:', error));
+      }
+    }
 
     function playBeat() {
       beatPads.forEach(pad => {
         if (pad.classList.contains('active')) {
-          const sound = sounds[pad.dataset.sound];
-          sound.currentTime = 0;
-          sound.play();
+          playSound(pad.dataset.sound);
         }
       });
     }
